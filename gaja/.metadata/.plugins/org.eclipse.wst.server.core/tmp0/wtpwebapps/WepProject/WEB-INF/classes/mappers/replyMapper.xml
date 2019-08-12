@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="gaja.project.mapper.ReplyMapper">
+
+
+<select id ="listpage" resultType = "ReplyVO" parameterType="map" >
+
+	select *
+	from board_reply
+	where bno = #{bno}
+	order by rno desc
+	limit #{page.pageStart},#{page.perPageNum}
+
+</select>
+
+<insert id ="create">
+
+ insert into board_reply(bno, replytext, replyer)
+ values(#{bno}, #{replytext}, #{replyer})
+</insert>
+
+<update id = "update">
+update board_reply
+set replytext = #{replytext}, updatedate = now()
+where rno = #{rno}
+</update>
+
+
+<delete id = "delete">
+delete from board_reply where rno = #{rno}
+</delete>
+
+
+<select id = "count" resultType = "int">
+select count(*)
+from board_reply
+where bno = #{bno}
+</select>
+
+
+<select id = "bno" resultType = "int">
+select bno
+from board_reply
+where rno = #{rno}
+</select>
+
+
+
+
+</mapper>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="gaja.project.mapper.shopMapper">
+
+
+ <select id="shoplist" resultType="ShopVO">
+
+<![CDATA[ select sname, scontent, price, amount, size, color,mainimage ,cate,snum
+from shop 
+	]]>	  
+	
+<if test ="cate != null">
+		 
+		 
+		 
+		 <if test ="cate == 'top'.toString()">
+		 
+		 where cate like 'top'
+		 
+		 </if> 
+		 
+		 <if test ="cate == 'bottom'.toString()">
+		 
+		 where cate like 'bottom'
+		 
+		 </if> 
+		 
+		 <if test ="cate == 'shoes'.toString()">
+		 
+		 where cate like 'shoes'
+		 
+		 </if> 
+		 
+		  <if test ="cate == 'etc'.toString()">
+		 
+		 where cate like 'etc'
+		 
+		 </if> 
+
+</if>
+
+<![CDATA[order by date desc]]>
+
+</select>
+
+
+
+<select id = "ProductDetail" resultType = "ShopVO">
+
+<![CDATA[ 
+
+select sname, scontent, price, amount, size, color,mainimage,subimage ,cate, snum
+from shop 
+where snum = #{snum}
+	]]>	  
+
+
+
+
+</select>
+
+
+
+
+
+
+
+
+<select id="searchshop" resultType="ShopVO" parameterType="map">
+
+<![CDATA[ 
+
+select sname, scontent, price, amount, size, color,mainimage ,cate,snum
+from shop ]]>
+
+<if test ="cate != 'all'">
+where cate = #{cate} and sname like CONCAT('%', #{keyword} , '%') 
+</if>
+
+
+<if test ="cate == 'all'">
+where sname like CONCAT('%', #{keyword} , '%') 
+</if>
+
+
+<![CDATA[ 
+order by date desc
+]]>
+
+</select>
+
+
+
+
+<insert id="order">
+ 
+ 
+  insert into orders (onum,mnum,snum, sname, price, size, color,ocount,odate,address,phone,message,ordercheck) 
+ values(0,#{mnum}, #{snum}, #{sname}, #{price}, #{size},#{color},#{ocount},curdate(),#{address},#{phone},#{message},"0")
+ 
+ 
+ </insert>
+
+
+
+<insert id="cart">
+ 
+ 
+  insert into cart (cnum,mnum,snum, sname, price, size,ocount,mainimage,color) 
+ values(0,#{mnum}, #{snum}, #{sname}, #{price}, #{size},#{ocount},#{mainimage},#{color})
+ 
+ 
+ </insert>
+ 
+ 
+ 
+ <select id="cartlist" resultType="CartVO">
+
+<![CDATA[ 
+
+select snum,sname, price, size,ocount,mainimage,color
+from CART 
+
+where mnum = #{mnum}
+order by sname desc
+]]>
+
+</select>
+ 
+ 
+ 
+ 
+ <delete id="cartdelete">
+ 
+ <![CDATA[ 
+ delete 
+ from cart
+ 
+ where mnum= #{mnum};
+ 
+ ]]>
+ 
+ </delete>
+ 
+ 
+ 
+ <insert id="shopinsert">
+ 
+ 
+  insert into shop (snum, sname, scontent, price,scount,amount,size,color,mainimage,cate,date,subimage) 
+ values(0,#{sname}, #{scontent}, #{price}, 0, #{amount},#{size},#{color},#{mainimage},#{cate},curdate(),#{subimage})
+ 
+ 
+ </insert>
+ 
+ 
+ 
+ <update id = "delivery">
+ 
+ update orders set ordercheck = 1
+ 
+ where onum = #{onum}
+ 
+ 
+ 
+ </update>
+ 
+ 
+ 
+  <update id = "amount">
+ 
+ update shop set amount = amount - #{ocount}
+ 
+ where snum = #{snum}
+ 
+ 
+ 
+ </update>
+ 
+ 
+ <delete id = "shopdelete">
+ 
+ delete from shop 
+ 
+ 
+ where snum = #{snum}
+ 
+
+ </delete>
+
+
+
+ 
+  <update id="shopupdate">
+ 
+ 
+  update shop set sname =#{sname}, scontent = #{scontent}, price = #{price},amount=#{amount},size=#{size},color=#{color},mainimage=#{mainimage},cate=#{cate},subimage= #{subimage} 
+  where snum = #{snum};
+ 
+ 
+ </update>
+ 
+ 
+ 
+
+</mapper>

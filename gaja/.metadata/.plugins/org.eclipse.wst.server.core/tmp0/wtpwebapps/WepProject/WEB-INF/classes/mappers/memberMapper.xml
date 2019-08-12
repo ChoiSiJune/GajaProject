@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="gaja.project.mapper.memberMapper">
+
+<select id="idchecked" resultType="String">
+ select 
+   id
+ from 
+   member
+ where id = #{id}
+ </select>
+ 
+ 
+ <insert id="join">
+ 
+  insert into member (mnum,name, id, pw, phone, address) 
+ values(0,#{name}, #{id}, #{pw}, #{phone}, #{address})
+ 
+ 
+ </insert>
+ 
+ 
+ 
+ 
+ <select id="login" resultType="String">
+ select 
+   id
+ from 
+   member
+ where id = #{id} and pw = #{pw}
+ </select>
+ 
+ 
+ 
+ <select id = "memberinfo" resultType="MemberVO">
+ 
+ 
+ select name,id,phone,address
+ 
+ from member
+ 
+ order by mnum
+ 
+ limit #{pageStart},#{perPageNum}
+ 
+ 
+ 
+ 
+ 
+ </select>
+ 
+ 
+ 
+ <select id = "orderinfo" resultType="MemberVO">
+ 
+ 
+ select name,id,phone,address,mnum
+ 
+ from member
+ 
+ where id = #{id}
+ 
+ 
+ </select>
+ 
+
+
+
+ 
+ <select id = "orderlist" resultType="OrderInfoVO">
+ 
+ <![CDATA[
+ select name,id,member.phone,member.address,sname,price,size,color,ocount,message,ordercheck,onum
+ 
+ from orders join member on orders.mnum = member.mnum
+ 
+ order by orders.mnum
+ 
+ limit #{pageStart},#{perPageNum}
+ ]]>
+ 
+ 
+ 
+ 
+ </select>
+ 
+ 
+ 
+  <select id = "inorder" resultType="SelectVO">
+ 
+ 
+ select sname,price,size,color,ocount,ordercheck
+ 
+ from orders 
+ 
+ where mnum = #{mnum}
+ 
+ order by odate desc
+ 
+ 
+
+ </select>
+ 
+ <update id ="myupdate">
+ 
+ 
+ update 
+ 
+ member
+ 
+ set pw = #{pw} ,phone = #{phone}, address= #{address}
+ 
+ where mnum = #{mnum}
+ 
+ 
+
+ </update>
+ 
+ 
+ <select id="countPaging" resultType="int">
+
+<![CDATA[ select count(onum) from orders where onum > 0 ]]>
+
+</select>
+
+
+ <select id="membercount" resultType="int">
+
+<![CDATA[ select count(mnum) from member where mnum > 0 ]]>
+
+</select>
+ 
+ 
+ 
+ </mapper>

@@ -1,0 +1,5 @@
+package gaja.project.aop;
+
+public class DeleteCheck {
+
+}

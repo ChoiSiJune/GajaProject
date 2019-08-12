@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+C:\Users\FORTUNE\Desktop\gaja\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+3554744532.index
+1336606443.index
+2234318921.index
+869304510.index
+2921570837.index
+619011373.index

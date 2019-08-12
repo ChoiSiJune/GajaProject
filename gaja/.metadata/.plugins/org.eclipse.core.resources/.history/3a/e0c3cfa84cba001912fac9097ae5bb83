@@ -1,0 +1,438 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+<% String id = (String)session.getAttribute("id"); %>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
+    <title>클라우스</title>
+
+    <!-- 부트스트랩 -->
+    <link href="/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- 메인css -->
+    <link href="/resources/css/main.css" rel="stylesheet">
+
+    <!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
+    <!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+
+      
+        <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  
+  
+ <script>
+  
+ var id ="<%=id%>";
+ id = id.trim();
+   
+ </script>
+ </head>
+
+
+
+
+
+<body style="padding-top:60px; background-color:#2c3338;">
+
+<jsp:include page= "../include/navi.jsp"/> <!-- 상단바 -->
+
+			
+<div class="row">	
+	
+	<div class="col-md-3"></div>
+		
+		<div class="col-md-6">	
+			
+			<div class="box box-primary">
+				
+				<div class="box-header"></div>
+			
+				<form role="form" method="post">
+
+				<input type='hidden' name='bno' value="${board.bno}">
+				<input type='hidden' name='page' value="${pagecri.page}">
+				<input type='hidden' name='perPageNum' value="${pagecri.perPageNum}">
+				<input type='hidden' name='searchType' value="${pagecri.searchType}">
+				<input type='hidden' name='keyword' value="${pagecri.keyword}">
+	
+				</form>
+		
+				<div class="box-body">
+					
+					<br><br>
+					<div class="form-group">
+					<label for="exampleInputEmail1">Title</label> <input type="text" name='title' 
+					class="form-control" value="${board.title}" readonly="readonly">
+					</div>
+			
+					<div class="form-group">
+					<label for="exampleInputPassword1">Content</label>
+					<textarea class="form-control" name="content" rows="3"	readonly="readonly">${board.content}</textarea>
+					</div>
+			
+					<div class="form-group">
+					<label for="exampleInputEmail1">Writer</label> <input type="text" name="writer" class="form-control" value="${board.writer}" readonly="readonly">
+					</div>
+	
+				</div>
+
+
+		<div class="box-footer">
+			
+			<div class = "col-md-2"></div>
+
+				<div class = "col-md-3">
+				<button type="submit" class="btn btn-warning">Modify</button>
+				</div>
+
+				<div class = "col-md-3">
+				<button type="submit" class="btn btn-danger">REMOVE</button>
+				</div>
+	
+				<div class = "col-md-3">
+				<button type="submit" class="btn btn-primary">LIST ALL</button>
+				</div>
+			
+		</div>
+		
+		</div>
+	
+	</div>
+		
+				<div class="col-md-3"></div>		
+</div> 
+		<!--/.col (left) -->
+		
+		
+<br><br><br><br>
+		
+	<div class = "row" id="replylist"></div>
+		
+		<div class= "row" id="pageing">	</div> <!-- 페이징 들어갈곳 -->	
+		<br><br>
+	
+	<div class="row">   <!-- 댓글처리 시작 -->
+		
+		<div class="col-md-3"></div>
+			
+			<div class="col-md-6" style="background:#5D5D5D;">
+			<br>
+			
+				<div class="box box-success">
+				
+					<div class="box-header"></div>
+				
+					<div class="box-body">
+					<label for="exampleInputEmail1">ReplyText</label> 
+					<input class="form-control" type="text" placeholder="REPLY TEXT" id="newReplyText">
+					</div>
+					
+					<div class="box-footer" style="text-align:right;">
+					<br>
+					<button type="button" class="btn" id="replyinsert" style="background:#FAED7D;color:blue;">댓글 등록</button>
+					</div>
+					
+				</div>
+	
+			</div>
+		
+		
+			<div class="col-md-3"></div>		
+			
+		</div>
+
+<br><br><br> <br>
+
+
+<!-- 스크립트 선언부 -->
+<script>
+
+$(document).ready(function(){
+	
+	replylist(1);
+		
+	var formObj = $("form[role='form']");
+	
+	console.log(formObj);
+	
+	$(".btn-warning").on("click", function(){
+		formObj.attr("action", "/modify");
+		formObj.attr("method", "get");		
+		formObj.submit();
+	});
+	
+	$(".btn-danger").on("click", function(){
+		formObj.attr("action", "/remove");
+		formObj.attr("method", "get");		
+		formObj.submit();
+	});
+	
+	$(".btn-primary").on("click", function(){
+	
+		formObj.attr("action", "/board");
+		formObj.attr("method","get");
+		formObj.submit();
+		
+	});
+	
+	
+		
+$("#replyinsert").on("click", function(){	 //댓글등록 ajax 
+	
+		var bno = ${board.bno};
+		var replyer = id;
+		var replytext = $("#newReplyText").val();
+		
+		
+		  $.ajax({
+				type:'post',
+				url:'/replies/',
+				headers: { 
+				      "Content-Type": "application/json",
+				      "X-HTTP-Method-Override": "POST" },
+				dataType:'text',
+				data: JSON.stringify({bno:bno, replyer:replyer, replytext:replytext}),
+				success:function(result){
+					console.log("result: " + result);
+					if(result == 'SUCCESS'){
+						alert("등록 되었습니다.");	
+						replylist();
+					}
+			}});
+	
+  
+});
+
+
+function replylist(replyPage){   //리플 목록 데이터 갱신
+		  
+	
+		if(replyPage==null || replyPage==undefined || replyPage=="null" )
+			replyPage=1;
+		  
+	
+		$.ajax({  
+			  url: '/replies/'+ ${board.bno}+ '/'+replyPage,
+			  data: "test",  
+			  success:function(data){
+			
+			
+				  replylistimpl(data);
+				  printPaging(data.cri, $(".pagination"));
+				
+					
+
+					},  
+			  dataType: "JSON"  
+			});  
+
+}
+		
+
+function replylistimpl(data){   //리플 목록 화면구현
+		
+		var clickcheck = true;
+		var list = data.list;
+		
+		var replyid ="";
+	
+	  
+
+		var $replyappend = $("<div id='replyappend'></div>");
+		
+		
+
+		for(var i = 0; i<list.length;i++){
+		
+			var replyid =  list[i].replyer;
+		
+			var str ='';
+			str += '<div class="row"><div class = "col-md-3"></div>';
+			str += '<div class = "col-md-6" id="replymain" style="border:5px solid gray;">';
+			str += '<div><br></div>';
+			str += '<p align="left" style="color:white;font-size:14px">'+ list[i].replyer +'</p>';
+			str += '<div id="replymaintext" style="background:#F6F6F6;overflow:hidden;height:auto;">';
+			str +=  '<textarea id = "replycontent'+ list[i].rno +'" readonly style="background-color:transparent;width:100%;resize:none;">' + list[i].replytext +'</textarea></div>';
+			
+			if(id==replyid){str +='<br><div style="float:right;"><input type="button" id="modi'+list[i].rno+'"  class="btn" value="수정" style="background:#FAED7D;color:blue" data-rno ="'+list[i].rno+'"> &nbsp;'
+			
+			 + '<div id="mod'+i+'" style="float:right;"><input type="button" id="delete'+list[i].rno+'"  class="btn" value="삭제"style="background:#FAED7D;color:blue;" data-rno ="'+list[i].rno+'"><br><br><br></div>'
+			 + '<input type="hidden" id="replyrno'+list[i].rno+'"  value = "'+list[i].rno+'">';}
+			
+			else { str+='<div><br><br><br></div>';}
+				
+			
+			$replyappend.append(str);	
+			$(document).on("click","#modi"+list[i].rno,function(){ //리플 수정
+						
+			if(clickcheck == true)
+				
+			{	
+				
+			var reply = $(this);
+			$("#replycontent"+reply.attr("data-rno")).attr("readonly",false);
+
+				reply.attr("value","수정등록");
+				reply.attr("style","background:red;");
+				reply.attr("style","color:blue;");
+		
+				clickcheck = false;		
+				
+			}
+					
+			else{
+					
+			var reply = $(this);	
+		  	replymodi(reply.attr("data-rno"));         
+		    clickcheck = true;
+		  	
+			}
+	
+				
+			  
+});
+			
+			
+						
+$(document).on("click","#delete"+list[i].rno,function(){
+				
+		var reply = $(this);
+	    replydelete(reply.attr("data-rno"));	   //리플 삭제 이벤트 추가
+				  
+});
+					
+	}	
+
+		$replyappend.append('<div class="text-center"><ul id="pagination" class="pagination pagination-sm no-margin "></ul></div>')
+		
+			$("#replylist").html($replyappend.html());
+		
+	}
+	
+	function replymodi(rno){  //리플 수정
+		
+
+		var content = $("#replycontent"+rno).val();
+	
+		
+		  $.ajax({
+				type:'put',
+				url:'/replies/'+rno,
+				headers: { 
+				      "Content-Type": "application/json",
+				      "X-HTTP-Method-Override": "PUT" },
+				data:JSON.stringify({replytext:content}), 
+				dataType:'text', 
+				success:function(result){
+					console.log("result: " + result);
+					if(result == 'SUCCESS'){
+						alert("수정 되었습니다.");
+						replylist();
+					}
+			}});
+	
+	
+	
+		}
+	
+	
+	
+	function replydelete(rno){ //리플 삭제구현
+				
+		 $.ajax({
+				type:'delete',
+				url:'/replies/'+rno,
+				headers: { 
+				      "Content-Type": "application/json",
+				      "X-HTTP-Method-Override": "delete" },
+				dataType:'text',
+				success:function(result){
+					console.log("result: " + result);
+					if(result == 'SUCCESS'){
+						alert("삭제되었습니다.");	
+						replylist();
+					}
+			}});
+		
+		
+		
+	}
+	
+
+	var printPaging = function(pageMaker, target) {
+
+		var str = "";
+		
+
+		if (pageMaker.prev) {
+			str += "<li><a href='" + (pageMaker.startPage - 1)
+					+ "'> << </a></li>";
+		}
+
+		for (var i = pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
+			var strClass = pageMaker.page.page == i ? 'class=active' : '';
+			str += "<li "+strClass+"><a href='"+i+"'>" + i + "</a></li>";
+		}
+
+		if (pageMaker.next) {
+			str += "<li><a href='" + (pageMaker.endPage + 1)
+					+ "'> >> </a></li>";
+		}
+
+	  target.html(str);
+	  
+	  paginationclick();
+
+	};
+
+
+
+	function paginationclick(){
+	$(".pagination").on("click", "li a", function(event){  // 리플 페이징 처리
+		  
+		event.preventDefault();
+		
+		replyPage = $(this).attr("href");
+		
+		replylist(replyPage);
+		
+		
+	});
+
+	}	
+
+});
+
+	function search(){
+
+	var keyword = $("#keyword").val();
+	location.href= "search?cate=all&keyword="+keyword;
+
+	}
+
+</script>
+
+
+
+    <!-- 모든 컴파일된 플러그인을 포함합니다 (아래), 원하지 않는다면 필요한 각각의 파일을 포함하세요 -->
+    <script src="/resources/bootstrap/js/bootstrap.min.js"></script>  
+</body>
+
+
+
+
+</html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gaja.project.mapper.BoardMapper">
+
+
+
+<insert id="boardReg">
+insert into Board(title,password,content,writer) 
+values(#{title},#{password},#{content},#{writer})
+</insert>
+
+
+<select id = "boardRead" resultType="BoardVO">
+
+select *
+from board
+where bno = #{bno}
+
+</select>
+
+
+<update id ="boardUpdate" >
+
+update Board
+set title = #{title},content = #{content}
+where  bno = #{bno} and password = #{password}
+
+</update>
+
+<update id ="cntupdate">
+update Board 
+set viewcnt = viewcnt + 1
+where bno = #{bno}
+</update>
+
+
+
+<delete id="boardDelete">
+
+delete from board
+where bno = #{bno}
+
+</delete>
+
+
+
+
+<select id ="listpage" resultType="BoardVO">
+
+
+select bno,title,writer,regdate,viewcnt,replycnt
+from board
+where bno > 0
+
+<include refid="search"></include>
+
+order by bno desc, regdate desc
+limit #{pageStart},#{perPageNum}
+
+
+
+
+</select>
+
+<select id="totalcount" resultType="int">
+select count(bno)
+from board
+where bno > 0
+<include refid="search"></include>
+
+</select>
+
+
+
+<update id = "replycntUpdate">
+
+update board set replycnt = replycnt + #{amount}
+where bno = #{bno}
+
+
+</update>
+
+
+
+
+
+
+
+<sql id="search"> <!-- 반복사용을 위해 만듬 -->
+
+<if test = "searchType !=null">
+
+<if test = "searchType == 't'.toString()" >  
+
+<![CDATA[
+
+and title like CONCAT("%", #{keyword}, "%")
+
+]]>
+
+</if>
+ 
+ 
+<if test = "searchType == 'c'.toString()" >  
+
+<![CDATA[
+
+and content like CONCAT("%", #{keyword}, "%") 
+
+]]>
+
+ </if>
+ 
+ 
+ <if test = "searchType == 'w'.toString()" >  
+
+<![CDATA[
+
+and writer like CONCAT("%", #{keyword}, "%")
+
+]]>
+
+ </if>
+ 
+ 
+ <if test = "searchType == 'tc'.toString()" >  
+
+<![CDATA[
+
+and title like CONCAT("%", #{keyword}, "%") or content like CONCAT("%", #{keyword}, "%")
+
+]]>
+
+ </if>
+ 
+</if>
+</sql>
+
+</mapper>
+

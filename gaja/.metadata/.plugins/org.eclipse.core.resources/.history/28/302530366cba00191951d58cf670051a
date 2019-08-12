@@ -1,0 +1,17 @@
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class TimerAction {
+	
+	public static void main(String[] args) {
+		
+		Timer t = new Timer();
+		
+		TimerTask t1 = new Timerss();
+		
+		t.schedule(t1, 5000 , 5000);
+		
+	
+	}
+
+}
